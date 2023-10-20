@@ -13,13 +13,13 @@ void setup()
 
 void loop()
 {
-  for (int i = 0; i <= 128; i++)
+  for (int i = 0; i <= 255; i++)
   {
     digitalPotWrite(i);
     delay(10);
   }
   delay(500);
-  for (int i = 128; i >= 0; i--)
+  for (int i = 255; i >= 0; i--)
   {
     digitalPotWrite(i);
     delay(10);
