@@ -5,10 +5,14 @@ static const int spiClk = 1000000;
 byte address = 0x00;
 SPIClass *hspi = NULL;
 
-const int analogInputPin = A0; // Use the appropriate analog input pin (for voltage)
+const int gatePin = A0;
+const int sourcePin = A2;
+const int drainPin = A1;
+
 
 void setup() 
 {
+  pinMode(33, INPUT);
   //for digital pot
   pinMode(53, OUTPUT);
   hspi = new SPIClass(SPI);
@@ -18,56 +22,62 @@ void setup()
   Serial.begin(9600);
 }
 
+
+
 void loop() {
-  // Read the analog value
-  //int rawValue = analogRead(analogInputPin);
-  
-  // Calculate the voltage using the voltage divider formula
-  // Vout = Vin * (R2 / (R1 + R2))
-  //float voltage = (float)rawValue * (30.0 / 1024.0); // 30V is the maximum voltage
-  //voltage = voltage * 5.96471;
-  // Print the voltage to the serial monitor
-  //float current = voltage / 99.64;
-  //Serial.print("Voltage: "); 
-  //Serial.print(voltage, 3);
-  //Serial.print("         Current: ");
-  //Serial.print(current, 4);
-  //Serial.print("Average Current: "); // print the current with 3 decimal places
-  //Serial.print(robojax.getCurrentAverage(300), 3);
-  //Serial.println();
-  
-  //delay(500); // Delay for readability (adjust as needed)
-
-
-  for (int i = 0; i <= 255; i++)
-  {
-    digitalPotWrite(i);
-    delay(10);
-  }
-  delay(500);
-  for (int i = 255; i >= 0; i--)
-  {
-    digitalPotWrite(i);
-    delay(10);
+  //This will read the digital pin 
+  int button = digitalRead(33);
+  //IF the button is pressed the charcterization will begin
+  if (button == HIGH){
+    for (int i = 0; i <= 255; i++)
+    {
+      digitalPotWrite(i);
+      delay(10);
+    }
+   delay(5000);
   }
 }
 
 float digitalPotWrite(int value)
 {
   hspi->beginTransaction(SPISettings(spiClk, MSBFIRST, SPI_MODE0));
-  digitalWrite(53, LOW); // Select the MCP4131
+  //select digital pot
+  digitalWrite(53, LOW); 
   hspi->transfer(address);
   hspi->transfer(value);
+
   //for voltage & current sensor
-  int rawValue = analogRead(analogInputPin);
-  float voltage = (float)rawValue * (30.0 / 1024.0); // 30V is the maximum voltage
-  float current = voltage / 99.64;
-  Serial.print("Voltage: "); 
-  Serial.print(voltage, 3);
+  //for gate pin
+  int rawValue = analogRead(gatePin);
+  float voltageGate = (float)rawValue * (30.0 / 1024.0); // 30V is the maximum voltage
+
+  //for drain pin
+  int rawValue2 = analogRead(drainPin);
+  float voltageDrain = (float)rawValue2 * (30.0 / 1024.0);
+
+  //for source pin
+  int rawValue3 = analogRead(sourcePin);
+  float voltageSource = (float)rawValue3 * (30.0 / 1024.0);
+
+  //calculate current
+  float current = voltageSource / 99.64;
+
+  //calculate vgs 
+  float VGS = voltageGate - voltageSource;
+
+  Serial.print("Vd: "); 
+  Serial.print(voltageDrain, 3); //1.1725 v raw value: 282
+  Serial.print("    Vg: ");
+  Serial.print(voltageGate, 3);
+  Serial.print("    Vs: ");
+  Serial.print(voltageSource, 3);
   Serial.print("         Current: ");
   Serial.print(current, 4);
+  Serial.print("    Vgs: ");
+  Serial.print(VGS, 5);
   Serial.println();
+
   //deselect digital pot
-  digitalWrite(53, HIGH); // Deselect the MCP4131
+  digitalWrite(53, HIGH); 
   hspi->endTransaction();
 }
