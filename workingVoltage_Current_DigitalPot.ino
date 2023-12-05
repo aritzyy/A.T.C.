@@ -9,7 +9,6 @@ const int gatePin = A0;
 const int sourcePin = A2;
 const int drainPin = A1;
 
-
 void setup() 
 {
   pinMode(33, INPUT);
@@ -22,20 +21,20 @@ void setup()
   Serial.begin(9600);
 }
 
-
-
-void loop() {
-  //This will read the digital pin 
+void loop() 
+{
   int button = digitalRead(33);
-  //IF the button is pressed the charcterization will begin
-  if (button == HIGH){
-    for (int i = 0; i <= 255; i++)
-    {
-      digitalPotWrite(i);
-      delay(10);
-    }
-   delay(5000);
+  
+  if(button == HIGH)
+  {
+  for (int i = 0; i <= 255; i++)
+  {
+    digitalPotWrite(i);
+    delay(100);
   }
+  digitalPotWrite(0);
+  }
+  
 }
 
 float digitalPotWrite(int value)
@@ -65,16 +64,16 @@ float digitalPotWrite(int value)
   //calculate vgs 
   float VGS = voltageGate - voltageSource;
 
-  Serial.print("Vd: "); 
-  Serial.print(voltageDrain, 3); //1.1725 v raw value: 282
-  Serial.print("    Vg: ");
-  Serial.print(voltageGate, 3);
-  Serial.print("    Vs: ");
+  Serial.print("GVoltage:"); 
+  Serial.print(voltageGate, 3); //1.1725 v raw value: 282
+  Serial.print("        DVoltage:"); 
+  Serial.print(voltageDrain, 3);
+  Serial.print("        SVoltage:"); 
   Serial.print(voltageSource, 3);
-  Serial.print("         Current: ");
+  Serial.print("          VGS:");
+  Serial.print(VGS, 3);
+  Serial.print("         Current:");
   Serial.print(current, 4);
-  Serial.print("    Vgs: ");
-  Serial.print(VGS, 5);
   Serial.println();
 
   //deselect digital pot
