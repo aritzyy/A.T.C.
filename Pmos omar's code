@@ -61,7 +61,7 @@ float digitalPotWrite(int value)
   float current = voltageSource / 99.09; // Current Measurement
 
   //calculate VSG (Note: VSG is the negative of what it is for NMOS)
-  float VSG = voltageSource - voltageGate;
+  float VGS = voltageGate - voltageSource;
 
   Serial.print("GVoltage:"); 
   Serial.print(voltageGate, 3); //1.1725 v raw value: 282
