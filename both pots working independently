@@ -1,3 +1,9 @@
+// This is omar's Notes for the pins
+//for the SPI connections: for the (NMOS pot the CS:is pin 53,the dip switch is pin 1 that connects to pin 5 on the arduino)
+// for the SPI connections: for the (PMOS pot the CS:is pin 42,the dip switch is pin 2 that connects to pin 7 on the arduino)
+// for the SPI connections: for both SCK and SDI are pins (sck:52,sdi:51)
+// for the button is pin 33
+
 #include <SPI.h>
 
 static const int spiClk = 1000000;
@@ -6,8 +12,9 @@ SPIClass *hspi = NULL;
 
 //nmos
 const int gatePin = A0;
-const int sourcePin = A2;
 const int drainPin = A1;
+const int sourcePin = A2;
+
 
 //pmos 
 const int pgatePin = A3; //change all a0 to a3 for pmos
